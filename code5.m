@@ -15,4 +15,4 @@ clearvars myfilename numfiles;
 [prop_mat anim] = getProps(seq, 1);
 d_mat = getDist(prop_mat, 1, anim);
 d_mat2 = cellFilter(d_mat);
-[cell_seqs, cell_coords, target_coords, test] = tracker(d_mat2,prop_mat,anim,seq);
+[cell_seqs, cell_coords, target_coords, target_coordsfull, target_test] = tracker(d_mat2,prop_mat,anim,seq);

@@ -1,4 +1,4 @@
-function [seqCells, coords, target_coords, test, testoverlay] = tracker(d_matrix, prop_matrix, anim, seq)
+function [seqCells, coords, target_coords, target_coordsfull, target_test] = tracker(d_matrix, prop_matrix, anim, seq)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -48,8 +48,33 @@ target = target(1:10);
 target_tracked = seqCells(target,:);
 target_coords = {1:frames};
 for i = 1:frames
-    target_coords{i} = coords{1}(:,target_tracked(:,i));
+    target_coords{i} = coords{i}(:,target_tracked(:,i));
 end
+
+target_coordsfull = cell2mat(target_coords);
+
+
+% CREATE FULL TABLE WITH DATA
+cells = length(target);
+nrows = cells * frames;
+idseq = target_tracked(1:10,1);
+target_test(1:nrows, 1:9) = 0; %target_test(ID_start, ID_tracked, x, y, size, convexity, dist, dist_total, speed_mean)
+target_test(1:nrows, 1) = repelem(idseq,frames); %assign ID_start
+
+c = 1;
+for i = 1:frames
+    rows = 10*i;
+    target_id = target_tracked(i, 1:10)' %get ID_tracked
+    target_id2 = target_tracked(1:10,i) %get ID_tracked for one frame
+    target_test(c:rows, 2) = target_id; %assign ID_tracked
+    for j = 1:cells
+        c2 = 10*(j-1) + i;
+        target_props = prop_matrix{i}(target_id2(j), 2:5) %get x, y, Size and Convexity
+        target_test(c2, 3:6) = target_props; %assign x, y, Size and Convexity per cell per frame
+    end
+    c = c+10;
+end
+
 end
 
 

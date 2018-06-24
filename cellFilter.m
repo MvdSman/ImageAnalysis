@@ -1,7 +1,7 @@
 function [ t_proc ] = cellFilter( t )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-t_proc = {1:length(t)};
+t_proc = {1:length(t)}; %t_proc(ID, ID_prev, Euclidean dist, x, y, dSize, dConv, feature
 for frame = 1:length(t)
     A = t{frame}(:,2);
     [uniqueA i j] = unique(A,'first');
@@ -13,10 +13,10 @@ for frame = 1:length(t)
     for i = 1:length(A)
         if ismember(t{frame}(i,2),udupA)
             dist = t{frame}(i,3);
-            dSiz =  t{frame}(i,6);
+            dSize =  t{frame}(i,6);
             dConv =  t{frame}(i,7);
-            feature = sum([abs(dist), abs(dSiz), abs(dConv)]);
-            differences(i,:) = [i, t{frame}(i,2), dist, dSiz, dConv, feature];
+            feature = sum([abs(dist), abs(dSize), abs(dConv)]);
+            differences(i,:) = [i, t{frame}(i,2), dist, dSize, dConv, feature];
         end
     end
 
