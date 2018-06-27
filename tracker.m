@@ -1,4 +1,4 @@
-function [seqCells, coords, target_coords, target_coordsfull, target_test, testoverlay] = tracker(d_matrix, prop_matrix, anim, seq)
+function [seqCells, coords, target_test, testoverlay] = tracker(d_matrix, prop_matrix, anim, seq)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -34,8 +34,10 @@ for frame = 2:frames
         clear index_id;
     end
     coords_fr(1,:) = 1:cells;
-    coords_fr(2,:) = prop_matrix{frame}(:,2);
-    coords_fr(3,:) = prop_matrix{frame}(:,3);
+%     coords_fr(2,:) = prop_matrix{frame}(:,2);
+%     coords_fr(3,:) = prop_matrix{frame}(:,3);
+    coords_fr(2,:) = props(:,2);
+    coords_fr(3,:) = props(:,3);
     coords{frame} = coords_fr;
     clear coords_fr;
 end
@@ -46,15 +48,16 @@ for i = 1:length(seqCells)
 end
 
 %% CELLS THAT ARE POSSIBLE TARGETS:
-target = seqCells(seqCells(:,11)==0);
-target = target(1:10);
+% target = seqCells(seqCells(:, (frames+1))==0)
+target = sortrows(seqCells, frames+1);
+target = target(1:10,1);
 target_tracked = seqCells(target,:);
-target_coords = {1:frames};
-for i = 1:frames
-    target_coords{i} = coords{i}(:,target_tracked(:,i));
-end
-
-target_coordsfull = cell2mat(target_coords);
+% target_coords = {1:frames};
+% for i = 1:frames
+%     target_coords{i} = coords{i}(:,target_tracked(:,i));
+% end
+% 
+% target_coordsfull = cell2mat(target_coords);
 
 
 %% CREATE FULL TABLE WITH DATA
@@ -67,25 +70,27 @@ target_test(1:nrows, 1) = repelem(idseq,frames); %assign ID_start
 c = 1;
 for i = 1:frames
     rows = cells*i;
-    target_id = target_tracked(i, 1:cells)'; %get ID_tracked
-    target_id2 = target_tracked(1:cells,i); %get ID_tracked for one frame
-    target_test(c:rows, 2) = target_id; %assign ID_tracked
+    target_id = target_tracked(1:cells,i); %get ID_tracked for one frame
     for j = 1:cells
-        c2 = cells*(j-1) + i;
-        target_props = prop_matrix{i}(target_id2(j), 2:5); %get x, y, Size and Convexity
-        target_test(c2, 3:6) = target_props; %assign x, y, Size and Convexity per cell per frame
-        target_props = d_matrix{i}(target_id2(j), [3,6,7]); %get Euclid dist, dSize and dConvexity
-        target_test(c2, 7:9) = target_props; %assign Euclid dist, dSize and dConvexity per cell per frame
+        c2 = frames*(j-1) + i;
+        target_test(c2, 2) = target_id(j); %assign ID_tracked
+        if target_id(j) > 0
+            target_props = prop_matrix{i}(target_id(j), 2:5); %get x, y, Size and Convexity
+            target_test(c2, 3:6) = target_props; %assign x, y, Size and Convexity per cell per frame
+            target_props = d_matrix{i}(target_id(j), [3,6,7]); %get Euclid dist, dSize and dConvexity
+            target_test(c2, 7:9) = target_props; %assign Euclid dist, dSize and dConvexity per cell per frame
+        end
     end
     c = c+cells;
 end
+
 
 groups = findgroups(target_test(:, 1)); %group the matrix per tracked cell: list of target ID groups
 meanDist = splitapply(@mean,target_test(:,7), groups); %apply function to value per group (mean per cell)
 
 c = 0;
-for i = 1:(frames*cells)
-    if mod(i-1,10) == 0
+for i = 1:nrows
+    if mod(i-1,frames) == 0
         c = c+1; %cell identifier
     else
         target_test(i, 10) = target_test(i-1, 10) + target_test(i, 7); % total dist = previous dist + current dist
@@ -99,12 +104,14 @@ testoverlay = anim;
 for cell = 1:cells
     groupid = groups==cell;
     coords = target_test(groupid, [3,4]);
-    coords2 = [coords(1,1), coords(1, 2)];
+    coords2 = [coords(1, 1), coords(1, 2)];
     for i = 2:frames
         cx1 = coords(i, 1);
-        cx2 = coords(i-1, 1);
         cy1 = coords(i, 2);
-        cy2 = coords(i-1, 2);
+        if cx1 == 0 && cy1 == 0
+            cx1 = coords(i-1, 1);
+            cy1 = coords(i-1, 2);
+        end
         coords2 = [coords2; [cx1, cy1]];
         
 %         c = i+1;
