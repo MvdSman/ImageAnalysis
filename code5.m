@@ -1,4 +1,4 @@
-%run('C:\Program Files\DIPimage 2.9\dipstart.m') % run the following command in Windows devices
+run('C:\Program Files\DIPimage 2.9\dipstart.m') % run the following command in Windows devices
 run('E:\Program Files\MATLAB\R2018a\toolbox\DIPimage 2.9\dipstart.m') % run the following command in Windows devices
 % dipimage % uncomment (ctrl-T) to open dipimage GUI
 % close all % to close all 6 figures dipimage initialises
@@ -17,3 +17,8 @@ clearvars myfilename numfiles;
 d_mat = getDist(prop_mat, 1, anim);
 d_mat2 = cellFilter(d_mat);
 [cell_seqs, cell_coords, target_coords, target_coordsfull, target_test, target_overlay] = tracker(d_mat2,prop_mat,anim,seq);
+
+for i = 1:10
+  tracks{i} = target_overlay{i}{1};
+end
+dipToGif(tracks, 'tracks.gif', 0.1)
