@@ -1,4 +1,4 @@
-function [ properties, animation, labeled ] = getProps( sequence, bool_draw )
+function [ properties, animation, labeled ] = getProps( sequence )
 %UNTITLED Cell tracker for n cells which can optionally draw the tracks
 %   sequence = image cells, bool_draw draw trace or not
 layers = length(sequence);

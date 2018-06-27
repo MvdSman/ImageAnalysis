@@ -1,4 +1,4 @@
-function [ dmatrix ] = getDist( properties, ids, animation )
+function [ dmatrix ] = getDist( properties )
 %UNTITLED Cell tracker for n cells which can optionally draw the tracks
 %   properties = properties data from tracker, ids = seq of cells to
 %   track, animation = all frames with overlays

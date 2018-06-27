@@ -17,7 +17,8 @@ for frame = 2:frames
 %for frame = 2:3
     features = d_matrix{frame};
     props = prop_matrix{frame};
-    cells = length(features);
+    cells = length(features)
+    frame
     coords_fr(1:3, 1:cells) = 0; %coords_fr([x, y], cell.ID)
     prev_length = length(seqCells);
     c = 1;
@@ -34,8 +35,10 @@ for frame = 2:frames
         clear index_id;
     end
     coords_fr(1,:) = 1:cells;
-    coords_fr(2,:) = prop_matrix{frame}(:,2);
-    coords_fr(3,:) = prop_matrix{frame}(:,3);
+%     coords_fr(2,:) = prop_matrix{frame}(:,2);
+%     coords_fr(3,:) = prop_matrix{frame}(:,3);
+    coords_fr(2,:) = props(:,2);
+    coords_fr(3,:) = props(:,3);
     coords{frame} = coords_fr;
     clear coords_fr;
 end
@@ -105,7 +108,7 @@ for cell = 1:cells
         cx2 = coords(i-1, 1);
         cy1 = coords(i, 2);
         cy2 = coords(i-1, 2);
-        coords2 = [coords2; [cx1, cy1]]
+        coords2 = [coords2; [cx1, cy1]];
         
 %         c = i+1;
 %         if i == 1
