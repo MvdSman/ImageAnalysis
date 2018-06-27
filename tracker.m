@@ -105,7 +105,7 @@ for cell = 1:cells
         cx2 = coords(i-1, 1);
         cy1 = coords(i, 2);
         cy2 = coords(i-1, 2);
-        coords2 = [coords2; [cx1, cy1]]
+        coords2 = [coords2; [cx1, cy1]];
         
 %         c = i+1;
 %         if i == 1
