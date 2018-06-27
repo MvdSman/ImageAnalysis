@@ -1,7 +1,7 @@
 %run('C:\Program Files\DIPimage 2.9\dipstart.m') % run the following command in Windows devices
 run('E:\Program Files\MATLAB\R2018a\toolbox\DIPimage 2.9\dipstart.m') % run the following command in Windows devices
-dipimage % uncomment (ctrl-T) to open dipimage GUI
-close all % to close all 6 figures dipimage initialises
+%dipimage % uncomment (ctrl-T) to open dipimage GUI
+%close all % to close all 6 figures dipimage initialises
 
 % 5.1
 % E:\Program Files\MATLAB\IAM\IA_images file location Mark PC
