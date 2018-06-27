@@ -1,4 +1,4 @@
-function [seqCells, coords, target_coords, target_coordsfull, target_test, testoverlay] = tracker(d_matrix, prop_matrix, anim, seq)
+function [seqCells, coords, target_test, testoverlay] = tracker(d_matrix, prop_matrix, anim, seq)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -48,15 +48,16 @@ for i = 1:length(seqCells)
 end
 
 %% CELLS THAT ARE POSSIBLE TARGETS:
-target = seqCells(seqCells(:, (frames+1))==0);
-target = target(1:10);
+% target = seqCells(seqCells(:, (frames+1))==0)
+target = sortrows(seqCells, frames+1);
+target = target(1:10,1);
 target_tracked = seqCells(target,:);
-target_coords = {1:frames};
-for i = 1:frames
-    target_coords{i} = coords{i}(:,target_tracked(:,i));
-end
-
-target_coordsfull = cell2mat(target_coords);
+% target_coords = {1:frames};
+% for i = 1:frames
+%     target_coords{i} = coords{i}(:,target_tracked(:,i));
+% end
+% 
+% target_coordsfull = cell2mat(target_coords);
 
 
 %% CREATE FULL TABLE WITH DATA
@@ -73,10 +74,12 @@ for i = 1:frames
     for j = 1:cells
         c2 = frames*(j-1) + i;
         target_test(c2, 2) = target_id(j); %assign ID_tracked
-        target_props = prop_matrix{i}(target_id(j), 2:5); %get x, y, Size and Convexity
-        target_test(c2, 3:6) = target_props; %assign x, y, Size and Convexity per cell per frame
-        target_props = d_matrix{i}(target_id(j), [3,6,7]); %get Euclid dist, dSize and dConvexity
-        target_test(c2, 7:9) = target_props; %assign Euclid dist, dSize and dConvexity per cell per frame
+        if target_id(j) > 0
+            target_props = prop_matrix{i}(target_id(j), 2:5); %get x, y, Size and Convexity
+            target_test(c2, 3:6) = target_props; %assign x, y, Size and Convexity per cell per frame
+            target_props = d_matrix{i}(target_id(j), [3,6,7]); %get Euclid dist, dSize and dConvexity
+            target_test(c2, 7:9) = target_props; %assign Euclid dist, dSize and dConvexity per cell per frame
+        end
     end
     c = c+cells;
 end
@@ -101,12 +104,14 @@ testoverlay = anim;
 for cell = 1:cells
     groupid = groups==cell;
     coords = target_test(groupid, [3,4]);
-    coords2 = [coords(1,1), coords(1, 2)];
+    coords2 = [coords(1, 1), coords(1, 2)];
     for i = 2:frames
         cx1 = coords(i, 1);
-        cx2 = coords(i-1, 1);
         cy1 = coords(i, 2);
-        cy2 = coords(i-1, 2);
+        if cx1 == 0 && cy1 == 0
+            cx1 = coords(i-1, 1);
+            cy1 = coords(i-1, 2);
+        end
         coords2 = [coords2; [cx1, cy1]];
         
 %         c = i+1;

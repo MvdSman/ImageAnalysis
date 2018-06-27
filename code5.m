@@ -31,4 +31,19 @@ clear seq files;
 [prop_matC, animC, labsC] = getProps(ctrlseq);
 d_matC = getDist(prop_matC);
 d_mat2C = cellFilter(d_matC);
-[cell_seqsC, cell_coordsC, target_coordsC, target_coordsfullC, target_testC, target_overlayC] = tracker(d_mat2C, prop_matC, animC, ctrlseq);
+[cell_seqsC, cell_coordsC, target_testC, target_overlayC] = tracker(d_mat2C, prop_matC, animC, ctrlseq);
+
+[prop_matM, animM, labsM] = getProps(mutseq);
+d_matM = getDist(prop_matM);
+d_mat2M = cellFilter(d_matM);
+[cell_seqsM, cell_coordsM, target_testM, target_overlayM] = tracker(d_mat2M, prop_matM, animM, mutseq);
+
+for i = 1:length(target_overlayC)
+  tracks{i} = target_overlayC{i}{1};
+end
+dipToGif(tracks, 'tracks_control.gif', 0.1)
+
+for i = 1:length(target_overlayM)
+  tracks{i} = target_overlayM{i}{1};
+end
+dipToGif(tracks, 'tracks_mutant.gif', 0.1)
