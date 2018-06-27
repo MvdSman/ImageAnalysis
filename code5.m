@@ -30,5 +30,5 @@ clear seq files;
 
 [prop_matC, animC, labsC] = getProps(ctrlseq);
 d_matC = getDist(prop_matC);
-d_mat2C = cellFilter2(d_matC);
+d_mat2C = cellFilter(d_matC);
 [cell_seqsC, cell_coordsC, target_coordsC, target_coordsfullC, target_testC, target_overlayC] = tracker(d_mat2C, prop_matC, animC, ctrlseq);

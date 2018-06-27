@@ -17,8 +17,7 @@ for frame = 2:frames
 %for frame = 2:3
     features = d_matrix{frame};
     props = prop_matrix{frame};
-    cells = length(features)
-    frame
+    cells = length(features);
     coords_fr(1:3, 1:cells) = 0; %coords_fr([x, y], cell.ID)
     prev_length = length(seqCells);
     c = 1;
@@ -49,7 +48,7 @@ for i = 1:length(seqCells)
 end
 
 %% CELLS THAT ARE POSSIBLE TARGETS:
-target = seqCells(seqCells(:,11)==0);
+target = seqCells(seqCells(:, (frames+1))==0);
 target = target(1:10);
 target_tracked = seqCells(target,:);
 target_coords = {1:frames};
@@ -70,25 +69,25 @@ target_test(1:nrows, 1) = repelem(idseq,frames); %assign ID_start
 c = 1;
 for i = 1:frames
     rows = cells*i;
-    target_id = target_tracked(i, 1:cells)'; %get ID_tracked
-    target_id2 = target_tracked(1:cells,i); %get ID_tracked for one frame
-    target_test(c:rows, 2) = target_id; %assign ID_tracked
+    target_id = target_tracked(1:cells,i); %get ID_tracked for one frame
     for j = 1:cells
-        c2 = cells*(j-1) + i;
-        target_props = prop_matrix{i}(target_id2(j), 2:5); %get x, y, Size and Convexity
+        c2 = frames*(j-1) + i;
+        target_test(c2, 2) = target_id(j); %assign ID_tracked
+        target_props = prop_matrix{i}(target_id(j), 2:5); %get x, y, Size and Convexity
         target_test(c2, 3:6) = target_props; %assign x, y, Size and Convexity per cell per frame
-        target_props = d_matrix{i}(target_id2(j), [3,6,7]); %get Euclid dist, dSize and dConvexity
+        target_props = d_matrix{i}(target_id(j), [3,6,7]); %get Euclid dist, dSize and dConvexity
         target_test(c2, 7:9) = target_props; %assign Euclid dist, dSize and dConvexity per cell per frame
     end
     c = c+cells;
 end
 
+
 groups = findgroups(target_test(:, 1)); %group the matrix per tracked cell: list of target ID groups
 meanDist = splitapply(@mean,target_test(:,7), groups); %apply function to value per group (mean per cell)
 
 c = 0;
-for i = 1:(frames*cells)
-    if mod(i-1,10) == 0
+for i = 1:nrows
+    if mod(i-1,frames) == 0
         c = c+1; %cell identifier
     else
         target_test(i, 10) = target_test(i-1, 10) + target_test(i, 7); % total dist = previous dist + current dist
