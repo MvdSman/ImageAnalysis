@@ -3,8 +3,6 @@
 % dipimage % uncomment (ctrl-T) to open dipimage GUI
 % close all % to close all 6 figures dipimage initialises
 
-% 6.1
-
 % Read files
 numfiles = 58;
 pf = 'w8t1t2_d7_';
@@ -17,11 +15,11 @@ clearvars pf sf i;
 % use linear stretch to view the images
 
 for i = 1:numfiles
-    % 6.1
+    % 6.1 (segmantation)
     orig_filtered{i} = threshold(originals{i}{3}, 'isodata', Inf);
     orig_filtered{i} = bclosing(orig_filtered{i}, 2, -1, -1);
     
-    % 6.3
+    % 6.3 (properties table)
     % Size and color properties
     % Column values of [properties] matrix: 
     % 1: Size; 
@@ -44,7 +42,7 @@ for i = 1:numfiles
     
 end
 
-% 6.2
+% 6.2 (4*15 panel)
 figure
 for i = 1:numfiles
     subplot(4,15,i); %
